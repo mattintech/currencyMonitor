@@ -1,0 +1,43 @@
+#from currency_converter import CurrencyConverter
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+import json
+
+##Globals
+apiKey = 'GC0DFV4q0CioizNKkKUi70JmiR51xpug'
+usdAmountToCovert=80000
+
+## Old method that does not seem to ever update
+#c = CurrencyConverter()
+## get value of 81K USD and convert to cad
+#usdtocad = round(c.convert(81000, 'USD', 'CAD'),10)
+
+#exchangeratesapi.io - $250 queries a mo
+a
+
+## Polygon API example
+currencyAPIUrl = f'https://api.polygon.io/v2/aggs/ticker/C:USDCAD/prev?unadjusted=true&apiKey={apiKey}'
+currencyRequest = Request(currencyAPIUrl)
+currencyJson = urlopen(currencyRequest).read().decode()
+jData = json.loads(currencyJson)
+
+## sample data 
+#{"ticker":"C:USDCAD","queryCount":1,"resultsCount":1,"adjusted":false,"results":[{"T":"C:USDCAD","v":108926,"o":1.21856,"c":1.22786,"h":1.2284,"l":1.2154,"t":
+# c= close price - https://polygon.io/docs/get_v2_aggs_ticker__forexTicker__prev_anchor
+usdtocad = jData["results"][0]["c"] * usdAmountToCovert
+
+#https://www.prowlapp.com/api.php
+## send result of usdtocad to prowlapi
+url = 'https://api.prowlapp.com/publicapi/add'
+post_data = {
+    "apikey" : "bd73fe6ae752ef353a068d39346896dccda415e9",
+    "priority" : "0",
+    "application" : "Currency Watcher",
+    "event" : "USD>CAD",
+    "description" : f"The price of conversion would be: ${usdtocad}"
+}
+
+## Send post to prowlapp to inturn send to APNS
+#request = Request(url, urlencode(post_data).encode())
+#json = urlopen(request).read().decode()
+#print(json)
